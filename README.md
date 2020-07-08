@@ -1,3 +1,3 @@
-# Mars_terraform_platform
+# Extraterrestial Platform game
 
 My first game! Inspired by Mars terraform project.
