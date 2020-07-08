@@ -26,10 +26,12 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.acc.x = -PLAYER_ACC
 
+        # Equations of Motion
         self.acc += self.vel * PLAYER_FRICTION
-        self.vel += self.acc * self.game.dt
-        self.pos += self.vel + 0.5 * self.acc
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc * self.game.dt  # Frame-independent motion
 
+        # Limit Player's movement (Will need to be updated when Camera is created)
         if self.pos.x > WIDTH:
             self.pos.x = WIDTH
         if self.pos.x < 0:
