@@ -18,17 +18,21 @@ class Game:
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.player = Player(self, WIDTH // 2, HEIGHT // 2)
-        self.all_sprites.add(self.player)
-        pl = Platform(0, HEIGHT - 40)
-        self.platforms.add(pl)
-        self.all_sprites.add(pl)
+        for x in range(0, WIDTH):
+            Platform(self, x, 23)
         self.run()
+
+    def draw_grid(self):
+        for x in range(0, WIDTH, TILESIZE):
+            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
+        for y in range(0, HEIGHT, TILESIZE):
+            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
 
     def run(self):
         # Game Loop
         self.playing = True
         while self.playing:
-            self.dt = self.clock.tick(FPS)
+            self.dt = self.clock.tick(FPS) / 1000  # Convert ms to seconds
             self.events()
             self.update()
             self.draw()
@@ -36,6 +40,10 @@ class Game:
     def update(self):
         # Game Loop - Update
         self.all_sprites.update()
+        hits = pg.sprite.spritecollide(self.player, self.platforms, False)
+        if hits:
+            self.player.pos.y = hits[0].rect.top
+            self.player.vel.y = 0
 
     def events(self):
         # Game Loop - events
@@ -50,6 +58,7 @@ class Game:
         # Game Loop - draw
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
+        self.draw_grid()
         # *after* drawing everything, flip the display
         pg.display.flip()
 
