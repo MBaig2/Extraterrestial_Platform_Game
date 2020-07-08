@@ -16,15 +16,19 @@ class Game:
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
-        self.player = Player()
+        self.platforms = pg.sprite.Group()
+        self.player = Player(self, WIDTH // 2, HEIGHT // 2)
         self.all_sprites.add(self.player)
+        pl = Platform(0, HEIGHT - 40)
+        self.platforms.add(pl)
+        self.all_sprites.add(pl)
         self.run()
 
     def run(self):
         # Game Loop
         self.playing = True
         while self.playing:
-            self.clock.tick(FPS)
+            self.dt = self.clock.tick(FPS)
             self.events()
             self.update()
             self.draw()
