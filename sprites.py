@@ -18,6 +18,13 @@ class Player(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
 
+    def jump(self):
+        self.rect.x += 1
+        hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+        self.rect.x += -1
+        if hits:
+            self.vel.y = PLAYER_JUMP
+
     def get_keys(self):
         self.acc = vec(0, PLAYER_GRAVITY)
         keys = pg.key.get_pressed()
@@ -27,7 +34,7 @@ class Player(pg.sprite.Sprite):
             self.acc.x = -PLAYER_ACC
 
         # Equations of Motion
-        self.acc += self.vel * PLAYER_FRICTION
+        self.acc.x += self.vel.x * PLAYER_FRICTION
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc * self.game.dt  # Frame-independent motion
 

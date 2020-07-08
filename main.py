@@ -52,6 +52,11 @@ class Game:
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False
+
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                    self.player.jump()
+
                 self.running = False
 
     def draw(self):
