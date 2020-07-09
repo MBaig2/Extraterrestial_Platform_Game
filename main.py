@@ -28,7 +28,7 @@ class Game:
             for col, tile in enumerate(tiles):
                 if tile == "1":
                     Platform(self, col, row)
-                elif tile == "p":
+                if tile == "p":
                     self.player = Player(self, col, row)
 
         self.camera = Camera(self.map.width, self.map.height)
@@ -52,7 +52,7 @@ class Game:
     def update(self):
         # Game Loop - Update
         self.all_sprites.update()
-        self.camera.update(self.player)
+        self.camera.complexCamera(self.player)
         hits = pg.sprite.spritecollide(self.player, self.platforms, False)
         if hits:
             self.player.pos.y = hits[0].rect.top
@@ -76,7 +76,6 @@ class Game:
     def draw(self):
         # Game Loop - draw
         self.screen.fill(BLACK)
-        self.all_sprites.draw(self.screen)
         self.draw_grid()
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
