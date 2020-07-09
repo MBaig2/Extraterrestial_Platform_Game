@@ -9,8 +9,7 @@ class Player(pg.sprite.Sprite):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(YELLOW)
+        self.image = self.game.player_graphics.get_image(48, 0, 48, 56)
         self.rect = self.image.get_rect()
 
         # Vectors
@@ -42,7 +41,7 @@ class Player(pg.sprite.Sprite):
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc * self.game.dt  # Frame-independent motion
 
-        # Limit Player's movement (Will need to be updated when Camera is created)
+        # Limit Player's movement
         if self.pos.x > self.game.map.width:
             self.pos.x = self.game.map.width
         if self.pos.x < 0:
@@ -65,3 +64,23 @@ class Platform(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
+
+
+class SpriteSheet:
+    """ Class to load and parse a spritesheet
+
+        x = Top Left x coordinate (in pixels)
+        y = Top Left y coordinate (in pixels)
+        width = width of desired cutout rectangle (in pixels)
+        height = height of desired cutout rectangle (in pixels)
+    """
+
+    def __init__(self, filename):
+        self.spritesheet = pg.image.load(filename).convert()
+
+    def get_image(self, x, y, width, height):
+        # Will 'cut' desired sprite out of a larger image sheet
+        image = pg.Surface((width, height))
+        image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        image.set_colorkey(BLACK)
+        return image

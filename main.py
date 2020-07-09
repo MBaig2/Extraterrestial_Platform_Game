@@ -18,7 +18,10 @@ class Game:
 
     def load_data(self):
         self.dir = path.dirname(__file__)
+        image_dir = path.join(self.dir, "Imgs")
         self.map = Map(path.join(self.dir, "map1.txt"))
+        # Load player graphics
+        self.player_graphics = SpriteSheet(path.join(image_dir, PLAYER_SPRITESHEET))
 
     def new(self):
         # start a new game
@@ -78,11 +81,16 @@ class Game:
 
     def draw(self):
         # Game Loop - draw
+        self.font = pg.font.Font(None, 30)
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         for sprite in self.all_sprites:
+            self.fps = self.font.render(
+                str(int(self.clock.get_fps())), True, pg.Color("white")
+            )
             self.screen.blit(sprite.image, self.camera.apply(sprite))
-
+            # Blit FPS for debugging purposes only. Remove in future release
+            self.screen.blit(self.fps, (50, 50))
         # *after* drawing everything, flip the display
         pg.display.flip()
 
