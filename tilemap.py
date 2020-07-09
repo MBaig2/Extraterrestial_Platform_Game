@@ -31,7 +31,9 @@ class Camera:
         x = -target.rect.centerx + WIDTH // 2
         y = -target.rect.centery + HEIGHT // 2
 
-        self.camera.topleft += (vec(x, y) - vec(self.camera.topleft)) * 0.06
+        self.camera.topleft += (
+            vec(x, y) - vec(self.camera.topleft)
+        ) * CAMERA_SMOOTHNESS_FACTOR
         self.camera.x = max(-(self.width - WIDTH), min(0, self.camera.x))
         self.camera.y = max(-(self.height - HEIGHT), min(0, self.camera.y))
 

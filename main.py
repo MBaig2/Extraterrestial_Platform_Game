@@ -53,10 +53,13 @@ class Game:
         # Game Loop - Update
         self.all_sprites.update()
         self.camera.complexCamera(self.player)
+
+        # Collide only if players are falling. Will need to change when I implement different types of platforms
         hits = pg.sprite.spritecollide(self.player, self.platforms, False)
-        if hits:
-            self.player.pos.y = hits[0].rect.top
-            self.player.vel.y = 0
+        if self.player.vel.y > 0:
+            if hits:
+                self.player.pos.y = hits[0].rect.top
+                self.player.vel.y = 0
 
     def events(self):
         # Game Loop - events
@@ -75,7 +78,7 @@ class Game:
 
     def draw(self):
         # Game Loop - draw
-        self.screen.fill(BLACK)
+        self.screen.fill(BGCOLOR)
         self.draw_grid()
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
