@@ -1,6 +1,8 @@
 import pygame as pg
 from sprites import *
 from settings import *
+from tilemap import *
+from os import path
 
 
 class Game:
@@ -11,15 +13,25 @@ class Game:
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
+        self.load_data()
         self.running = True
+
+    def load_data(self):
+        self.dir = path.dirname(__file__)
+        self.map = Map(path.join(self.dir, "map1.txt"))
 
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
-        self.player = Player(self, WIDTH // 2, HEIGHT // 2)
-        for x in range(0, WIDTH):
-            Platform(self, x, 23)
+        for row, tiles in enumerate(self.map.data):
+            for col, tile in enumerate(tiles):
+                if tile == "1":
+                    Platform(self, col, row)
+                elif tile == "p":
+                    self.player = Player(self, col, row)
+
+        self.camera = Camera(self.map.width, self.map.height)
         self.run()
 
     def draw_grid(self):
@@ -40,6 +52,7 @@ class Game:
     def update(self):
         # Game Loop - Update
         self.all_sprites.update()
+        self.camera.update(self.player)
         hits = pg.sprite.spritecollide(self.player, self.platforms, False)
         if hits:
             self.player.pos.y = hits[0].rect.top
@@ -65,6 +78,9 @@ class Game:
         self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         self.draw_grid()
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
+
         # *after* drawing everything, flip the display
         pg.display.flip()
 
