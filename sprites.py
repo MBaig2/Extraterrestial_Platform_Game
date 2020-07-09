@@ -18,6 +18,10 @@ class Player(pg.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
 
+        # Charateristics of Player
+        self.onGnd = False
+        self.jumpStrength = PLAYER_JUMP
+
     def jump(self):
         self.rect.x += 1
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
@@ -39,8 +43,8 @@ class Player(pg.sprite.Sprite):
         self.pos += self.vel + 0.5 * self.acc * self.game.dt  # Frame-independent motion
 
         # Limit Player's movement (Will need to be updated when Camera is created)
-        if self.pos.x > WIDTH:
-            self.pos.x = WIDTH
+        if self.pos.x > self.game.map.width:
+            self.pos.x = self.game.map.width
         if self.pos.x < 0:
             self.pos.x = 0
 
