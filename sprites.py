@@ -47,37 +47,38 @@ class Player(pg.sprite.Sprite):
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc * self.game.dt  # Frame-independent motion
 
-    def collide_with_platforms(self, dir):
-        if dir == "x":
-            hits = pg.sprite.spritecollide(self, self.game.platforms, False)
-            if hits:
-                if self.vel.x > 0:
-                    self.pos.x = hits[0].rect.left - self.rect.width
-                if self.vel.x < 0:
-                    self.pos.x = hits[0].rect.right
-            self.vel.x = 0
-            self.rect.x = self.pos.x
+    def collide_with_platforms(self):
+        pass
 
-        if dir == "y":
-            hits = pg.sprite.spritecollide(self, self.game.platforms, False)
-            if hits:
-                if self.vel.y > 0:
-                    self.pos.y = hits[0].rect.top - self.rect.height
-                if self.vel.x < 0:
-                    self.pos.x = hits[0].rect.bottom
-            self.vel.y = 0
-            self.rect.y = self.pos.y
+        # Move up/down
 
     def update(self):
         self.get_keys()
         # Update pos
-
-        self.rect.x = self.pos.x
-        self.collide_with_platforms("x")
-        self.rect.y = self.pos.y
-        self.collide_with_platforms("y")
-
         self.rect.midbottom = self.pos
+
+        # Check and see if we hit anything
+        hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+        for hit in hits:
+            # If we are moving right,
+            # set our right side to the left side of the item we hit
+            if self.vel.x > 0:
+                self.rect.right = hit[0].rect.left
+            elif self.vel.x < 0:
+                # Otherwise if we are moving left, do the opposite.
+                self.rect.left = hit[0].rect.right
+
+        hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+        for hit in hits:
+
+            # Reset our position based on the top/bottom of the object.
+            if self.vel.y > 0:
+                self.rect.bottom = hit[0].rect.top
+            elif self.vel.y < 0:
+                self.rect.top = hit[0].rect.bottom
+
+            # Stop our vertical movement
+            self.vel.y = 0
 
 
 class Platform(pg.sprite.Sprite):

@@ -65,7 +65,7 @@ class Game:
         #         self.player.vel.y = 0
 
     def events(self):
-        # Game Loop - events
+        # Game Loop - eventsddd
         for event in pg.event.get():
             # check for closing window
             if event.type == pg.QUIT:
