@@ -36,19 +36,47 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.acc.x = -PLAYER_ACC
 
-        # Equations of Motion
-        self.acc.x += self.vel.x * PLAYER_FRICTION
-        self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc * self.game.dt  # Frame-independent motion
-
         # Limit Player's movement
         if self.pos.x > self.game.map.width:
             self.pos.x = self.game.map.width
         if self.pos.x < 0:
             self.pos.x = 0
 
+        # Equations of Motion
+        self.acc.x += self.vel.x * PLAYER_FRICTION
+        self.vel += self.acc
+        self.pos += self.vel + 0.5 * self.acc * self.game.dt  # Frame-independent motion
+
+    def collide_with_platforms(self, dir):
+        if dir == "x":
+            hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+            if hits:
+                if self.vel.x > 0:
+                    self.pos.x = hits[0].rect.left - self.rect.width
+                if self.vel.x < 0:
+                    self.pos.x = hits[0].rect.right
+            self.vel.x = 0
+            self.rect.x = self.pos.x
+
+        if dir == "y":
+            hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+            if hits:
+                if self.vel.y > 0:
+                    self.pos.y = hits[0].rect.top - self.rect.height
+                if self.vel.x < 0:
+                    self.pos.x = hits[0].rect.bottom
+            self.vel.y = 0
+            self.rect.y = self.pos.y
+
     def update(self):
         self.get_keys()
+        # Update pos
+
+        self.rect.x = self.pos.x
+        self.collide_with_platforms("x")
+        self.rect.y = self.pos.y
+        self.collide_with_platforms("y")
+
         self.rect.midbottom = self.pos
 
 

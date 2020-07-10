@@ -58,11 +58,11 @@ class Game:
         self.camera.complexCamera(self.player)
 
         # Collide only if players are falling. Will need to change when I implement different types of platforms
-        hits = pg.sprite.spritecollide(self.player, self.platforms, False)
-        if self.player.vel.y > 0:
-            if hits:
-                self.player.pos.y = hits[0].rect.top
-                self.player.vel.y = 0
+        # hits = pg.sprite.spritecollide(self.player, self.platforms, False)
+        # if self.player.vel.y > 0:
+        #     if hits:
+        #         self.player.pos.y = hits[0].rect.top
+        #         self.player.vel.y = 0
 
     def events(self):
         # Game Loop - events
