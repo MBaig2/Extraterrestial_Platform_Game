@@ -9,7 +9,12 @@ class Player(pg.sprite.Sprite):
         self.groups = game.all_sprites
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = self.game.player_graphics.get_image(48, 0, 48, 56)
+        self.walking = False
+        self.jumping = False
+        self.currentFrame = 0
+        self.lastUpdate = 0
+        self.load_imgs()
+        self.image = self.standingFrame
         self.rect = self.image.get_rect()
 
         # Vectors
@@ -20,6 +25,16 @@ class Player(pg.sprite.Sprite):
         # Charateristics of Player
         self.onGnd = False
 
+    def load_imgs(self):
+        self.standingFrame = self.game.player_graphics.get_image(24, 32, 24, 32)
+        self.walkingFrames_R = [
+            self.game.player_graphics.get_image(48, 32, 24, 32),
+            self.game.player_graphics.get_image(0, 32, 24, 32),
+        ]
+        self.walkingFrames_L = []
+        for frame in self.walkingFrames_R:
+            self.walkingFrames_L.append(pg.transform.flip(frame, True, False))
+
     def move(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
@@ -27,7 +42,26 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.acc.x = -PLAYER_ACC
 
+    def animate(self):
+        now = pg.time.get_ticks()
+        if self.vel.x != 0:
+            self.walking = True
+        else:
+            self.walking = False
+        if self.walking:
+            if now - self.lastUpdate > 200:
+                self.lastUpdate = now
+                self.currentFrame = (self.currentFrame + 1) % len(self.walkingFrames_R)
+                bottom = self.rect.bottom
+                if self.vel.x > 0:
+                    self.image = self.walkingFrames_R[self.currentFrame]
+                else:
+                    self.image = self.walkingFrames_L[self.currentFrame]
+                self.rect = self.image.get_rect()
+                self.rect.bottom = bottom
+
     def update(self):
+        self.animate()
         self.acc = vec(0, PLAYER_MASS * GRAVITY)
         self.move()
 
@@ -39,6 +73,9 @@ class Player(pg.sprite.Sprite):
         self.pos.x += (
             self.vel.x + 0.5 * self.acc.x * self.game.dt
         )  # Update x component (Frame-independent motion)
+        if abs(self.vel.x) < PLAYER_VEL_EPSILON:
+            self.vel.x = 0
+
         self.rect.x = self.pos.x
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         for hit in hits:  # Horizontal collision
@@ -67,7 +104,7 @@ class Player(pg.sprite.Sprite):
             self.pos.y = self.rect.y  # Update true postion
 
         # Limit Player's movement
-        if self.rect.bottom >= HEIGHT:
+        if self.rect.bottom > HEIGHT:
             self.vel.y = 0
             self.rect.bottom = HEIGHT
             self.pos.y = self.rect.y
@@ -103,5 +140,6 @@ class SpriteSheet:
         # Will 'cut' desired sprite out of a larger image sheet
         image = pg.Surface((width, height))
         image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        image = pg.transform.scale(image, (width * 2, height * 2))
         image.set_colorkey(BLACK)
         return image
