@@ -15,18 +15,21 @@ class Player(pg.sprite.Sprite):
         # Vectors
         self.pos = vec(x, y)
         self.vel = vec(0, 0)
-        self.acc = vec(0, 0)
+        self.acc = vec(0, PLAYER_MASS * GRAVITY)
 
         # Charateristics of Player
         self.onGnd = False
 
-    def update(self):
-        self.acc = vec(0, PLAYER_GRAVITY)
+    def move(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
             self.acc.x = PLAYER_ACC
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.acc.x = -PLAYER_ACC
+
+    def update(self):
+        self.acc = vec(0, PLAYER_MASS * GRAVITY)
+        self.move()
 
         # Equations of Motion
         self.acc.x += self.vel.x * PLAYER_FRICTION
