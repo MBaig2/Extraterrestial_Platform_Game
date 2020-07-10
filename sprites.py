@@ -19,16 +19,8 @@ class Player(pg.sprite.Sprite):
 
         # Charateristics of Player
         self.onGnd = False
-        self.jumpStrength = PLAYER_JUMP
 
-    def jump(self):
-        self.rect.x += 1
-        hits = pg.sprite.spritecollide(self, self.game.platforms, False)
-        self.rect.x += -1
-        if hits:
-            self.vel.y = PLAYER_JUMP
-
-    def get_keys(self):
+    def update(self):
         self.acc = vec(0, PLAYER_GRAVITY)
         keys = pg.key.get_pressed()
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
@@ -36,49 +28,46 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.acc.x = -PLAYER_ACC
 
-        # Limit Player's movement
-        if self.pos.x > self.game.map.width:
-            self.pos.x = self.game.map.width
-        if self.pos.x < 0:
-            self.pos.x = 0
-
         # Equations of Motion
         self.acc.x += self.vel.x * PLAYER_FRICTION
         self.vel += self.acc
-        self.pos += self.vel + 0.5 * self.acc * self.game.dt  # Frame-independent motion
 
-    def collide_with_platforms(self):
-        pass
-
-        # Move up/down
-
-    def update(self):
-        self.get_keys()
-        # Update pos
-        self.rect.midbottom = self.pos
-
-        # Check and see if we hit anything
+        # Collision check in all 4 directions
+        self.pos.x += (
+            self.vel.x + 0.5 * self.acc.x * self.game.dt
+        )  # Update x component (Frame-independent motion)
+        self.rect.x = self.pos.x
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
-        for hit in hits:
-            # If we are moving right,
-            # set our right side to the left side of the item we hit
-            if self.vel.x > 0:
-                self.rect.right = hit[0].rect.left
-            elif self.vel.x < 0:
-                # Otherwise if we are moving left, do the opposite.
-                self.rect.left = hit[0].rect.right
+        for hit in hits:  # Horizontal collision
+            if self.vel.x > 0:  # Rightward motion
+                self.rect.right = hit.rect.left
+            elif self.vel.y < 0:  # Leftward motion
+                self.rect.left = hit.rect.right
+            self.pos.x = self.rect.x  # Update true postion
+
+        self.pos.y += self.vel.y + 0.5 * self.acc.y * self.game.dt  # Update y component
+        self.rect.y = self.pos.y + 1
+
+        # This prevents double jumping
+        if self.vel.y > 0:
+            self.onGnd = False
 
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
-        for hit in hits:
+        for hit in hits:  # Vertical Collision
+            if self.vel.y > 0:  # Downward motion
+                self.rect.bottom = hit.rect.top
+                self.vel.y = 0
+                self.onGnd = True
+            elif self.vel.y < 0:  # Upward motion
+                self.rect.top = hit.rect.bottom
+                self.vel.y = 0
+            self.pos.y = self.rect.y  # Update true postion
 
-            # Reset our position based on the top/bottom of the object.
-            if self.vel.y > 0:
-                self.rect.bottom = hit[0].rect.top
-            elif self.vel.y < 0:
-                self.rect.top = hit[0].rect.bottom
-
-            # Stop our vertical movement
+        # Limit Player's movement
+        if self.rect.bottom >= HEIGHT:
             self.vel.y = 0
+            self.rect.bottom = HEIGHT
+            self.pos.y = self.rect.y
 
 
 class Platform(pg.sprite.Sprite):
