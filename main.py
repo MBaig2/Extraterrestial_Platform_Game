@@ -19,6 +19,7 @@ class Game:
     def load_data(self):
         self.dir = path.dirname(__file__)
         image_dir = path.join(self.dir, "Imgs")
+        map_dir = path.join(self.dir, "maps")
         self.map = Map(path.join(self.dir, "map1.txt"))
         # Load player graphics
         self.player_graphics = SpriteSheet(path.join(image_dir, PLAYER_SPRITESHEET))

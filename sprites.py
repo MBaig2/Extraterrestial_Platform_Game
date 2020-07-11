@@ -37,6 +37,16 @@ class Player(pg.sprite.Sprite):
         for frame in self.walkingFrames_R:
             self.walkingFrames_L.append(pg.transform.flip(frame, True, False))
 
+    def load_imgs(self):
+        self.standingFrame = self.game.player_graphics.get_image(24, 32, 24, 32)
+        self.walkingFrames_R = [
+            self.game.player_graphics.get_image(48, 32, 24, 32),
+            self.game.player_graphics.get_image(0, 32, 24, 32),
+        ]
+        self.walkingFrames_L = []
+        for frame in self.walkingFrames_R:
+            self.walkingFrames_L.append(pg.transform.flip(frame, True, False))
+
     def move(self):
         keys = pg.key.get_pressed()
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
@@ -53,6 +63,7 @@ class Player(pg.sprite.Sprite):
 
         if self.walking and self.onGnd:
             if now - self.lastUpdate > PLAYER_ANIM_SPEED:
+
                 self.lastUpdate = now
                 self.currentFrame = (self.currentFrame + 1) % len(self.walkingFrames_R)
                 bottom = self.rect.bottom

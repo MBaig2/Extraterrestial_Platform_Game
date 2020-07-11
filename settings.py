@@ -26,5 +26,7 @@ PLAYER_ACC = 0.5
 PLAYER_FRICTION = -0.12
 PLAYER_JUMP = -15
 PLAYER_SPRITESHEET = "dwarf-m-001.png"
+
 PLAYER_VEL_EPSILON = 0.5
 PLAYER_ANIM_SPEED = 200  # Speed of walking animation, in ms
+
