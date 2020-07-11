@@ -23,6 +23,7 @@ class Game:
         self.map = Map(path.join(self.dir, "map1.txt"))
         # Load player graphics
         self.player_graphics = SpriteSheet(path.join(image_dir, PLAYER_SPRITESHEET))
+        self.background = Background(path.join(image_dir, "rock.png"), [0, 0])
 
     def new(self):
         # start a new game
@@ -35,7 +36,7 @@ class Game:
                 if tile == "p":
                     self.player = Player(self, col, row)
 
-        self.camera = Camera(self.map.width, self.map.height)
+        self.camera = Camera(self.background.rect.width, self.background.rect.height)
         self.run()
 
     def draw_grid(self):
@@ -56,6 +57,7 @@ class Game:
     def update(self):
         # Game Loop - Update
         self.all_sprites.update()
+        self.camera.complexCamera(self.background)
         self.camera.complexCamera(self.player)
 
     def events(self):
@@ -77,12 +79,17 @@ class Game:
     def draw(self):
         # Game Loop - draw
         self.font = pg.font.Font(None, 30)
-        self.screen.fill(BGCOLOR)
-        self.draw_grid()
+        self.screen.fill(WHITE)
+        # Track Background for parallax effect
+        self.screen.blit(
+            self.background.image, self.camera.apply_rect(self.background.rect)
+        )
+        # self.draw_grid()
         for sprite in self.all_sprites:
             self.fps = self.font.render(
-                str(int(self.clock.get_fps())), True, pg.Color("white")
+                str(int(self.clock.get_fps())), True, pg.Color("gray11")
             )
+
             self.screen.blit(sprite.image, self.camera.apply(sprite))
             # Blit FPS for debugging purposes only. Remove in future release
             self.screen.blit(self.fps, (50, 50))

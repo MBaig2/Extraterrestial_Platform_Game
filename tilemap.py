@@ -44,6 +44,8 @@ class Camera:
 class Background(pg.sprite.Sprite):
     def __init__(self, filename, location):
         pg.sprite.Sprite.__init__(self)  # call Sprite initializer
-        self.image = pg.image.load(filename)
+        self.image = pg.image.load(filename).convert()
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
+        self.background_rate1 = 0.5
+        self.background_rate2 = 0.25
