@@ -17,7 +17,7 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         # self.rect.inflate_ip(-10, -20)
         # self.rect = pg.Rect(0, 15, 40, 60)
-        pg.draw.rect(self.image, RED, self.rect, 1)
+        # pg.draw.rect(self.image, RED, self.rect, 1)
 
         # Vectors
         self.pos = vec(x, y)
@@ -26,16 +26,6 @@ class Player(pg.sprite.Sprite):
 
         # Charateristics of Player
         self.onGnd = True
-
-    def load_imgs(self):
-        self.standingFrame = self.game.player_graphics.get_image(24, 32, 24, 32)
-        self.walkingFrames_R = [
-            self.game.player_graphics.get_image(48, 32, 24, 32),
-            self.game.player_graphics.get_image(0, 32, 24, 32),
-        ]
-        self.walkingFrames_L = []
-        for frame in self.walkingFrames_R:
-            self.walkingFrames_L.append(pg.transform.flip(frame, True, False))
 
     def load_imgs(self):
         self.standingFrame = self.game.player_graphics.get_image(24, 32, 24, 32)
