@@ -27,6 +27,9 @@ class Camera:
     def apply(self, entity):
         return entity.rect.move(self.camera.topleft)
 
+    def apply_rect(self, rect):
+        return rect.move(self.camera.topleft)
+
     def complexCamera(self, target):
         x = -target.rect.centerx + WIDTH // 2
         y = -target.rect.centery + HEIGHT // 2
@@ -37,3 +40,10 @@ class Camera:
         self.camera.x = max(-(self.width - WIDTH), min(0, self.camera.x))
         self.camera.y = max(-(self.height - HEIGHT), min(0, self.camera.y))
 
+
+class Background(pg.sprite.Sprite):
+    def __init__(self, filename, location):
+        pg.sprite.Sprite.__init__(self)  # call Sprite initializer
+        self.image = pg.image.load(filename)
+        self.rect = self.image.get_rect()
+        self.rect.left, self.rect.top = location

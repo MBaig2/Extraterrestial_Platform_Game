@@ -77,7 +77,7 @@ class Player(pg.sprite.Sprite):
         self.pos.x += (
             self.vel.x + 0.5 * self.acc.x * self.game.dt
         )  # Update x component (Frame-independent motion)
-        if abs(self.vel.x) < PLAYER_VEL_EPSILON:
+        if abs(self.vel.x) < PLAYER_VELX_EPSILON:
             self.vel.x = 0
 
         self.rect.x = self.pos.x
