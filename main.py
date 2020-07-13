@@ -1,4 +1,5 @@
 import pygame as pg
+import pytmx
 from sprites import *
 from settings import *
 from tilemap import *
@@ -17,25 +18,46 @@ class Game:
         self.running = True
 
     def load_data(self):
-        self.dir = path.dirname(__file__)
-        image_dir = path.join(self.dir, "Imgs")
-        map_dir = path.join(self.dir, "maps")
-        self.map = Map(path.join(self.dir, "map1.txt"))
+        game_folder = path.dirname(__file__)
+        image_dir = path.join(game_folder, "Imgs")
+        map_dir = path.join(game_folder, "maps")
+        self.map = TiledMap(path.join(map_dir, "Map1.tmx"))
+        self.map_img = self.map.make_map()
+        self.map_rect = self.map_img.get_rect()
         # Load player graphics
         self.player_graphics = SpriteSheet(path.join(image_dir, PLAYER_SPRITESHEET))
+        self.platform_graphics = SpriteSheet(
+            path.join(image_dir, "tileset1_padded.png")
+        )
         self.background = Background(path.join(image_dir, "rock.png"), [0, 0])
 
     def new(self):
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
-        for row, tiles in enumerate(self.map.data):
-            for col, tile in enumerate(tiles):
-                if tile == "1":
-                    Platform(self, col, row)
-                if tile == "p":
-                    self.player = Player(self, col, row)
+        # for row, tiles in enumerate(self.map.data):
+        #     for col, tile in enumerate(tiles):
+        #         if tile == "1":
+        #             Platform(self, col, row)
+        #         if tile == "p":
+        #             self.player = Player(self, col, row)
+        for tile_object in self.map.tmxdata.objects:
+            if tile_object.name == "Player":
+                self.player = Player(self, tile_object.x, tile_object.y)
+            if tile_object.name == "Platform":
+                TiledPlatform(
+                    self,
+                    tile_object.x,
+                    tile_object.y,
+                    tile_object.width,
+                    tile_object.height,
+                )
+            if tile_object.name == "Background":
+                self.img_bitmap = self.map.tmxdata.get_tile_image_by_gid(
+                    tile_object.gid
+                )
 
+                self.temp_rect = pg.Rect(0, 0, tile_object.width, tile_object.height)
         self.camera = Camera(self.background.rect.width, self.background.rect.height)
         self.run()
 
@@ -84,12 +106,16 @@ class Game:
         self.screen.blit(
             self.background.image, self.camera.apply_rect(self.background.rect)
         )
-        # self.draw_grid()
+        # self.screen.blit(self.backimg, (0, 0))
+
+        self.screen.blit(self.img_bitmap, self.camera.apply_rect(self.temp_rect))
+        self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
+
         for sprite in self.all_sprites:
             self.fps = self.font.render(
                 str(int(self.clock.get_fps())), True, pg.Color("gray11")
             )
-
+            # self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))
             self.screen.blit(sprite.image, self.camera.apply(sprite))
             # Blit FPS for debugging purposes only. Remove in future release
             self.screen.blit(self.fps, (50, 50))
