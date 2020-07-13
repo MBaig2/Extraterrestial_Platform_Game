@@ -57,8 +57,12 @@ class Game:
                     tile_object.gid
                 )
 
-                self.temp_rect = pg.Rect(0, 0, tile_object.width, tile_object.height)
-        self.camera = Camera(self.background.rect.width, self.background.rect.height)
+                self.temp_rect = pg.Rect(
+                    tile_object.x, tile_object.y, tile_object.width, tile_object.height
+                )
+        self.camera = Camera(self.map.width, self.map.height)
+        # self.camera = Camera(self.temp_rect.width, self.temp_rect.height)
+
         self.run()
 
     def draw_grid(self):
@@ -101,12 +105,7 @@ class Game:
     def draw(self):
         # Game Loop - draw
         self.font = pg.font.Font(None, 30)
-        self.screen.fill(WHITE)
         # Track Background for parallax effect
-        self.screen.blit(
-            self.background.image, self.camera.apply_rect(self.background.rect)
-        )
-        # self.screen.blit(self.backimg, (0, 0))
 
         self.screen.blit(self.img_bitmap, self.camera.apply_rect(self.temp_rect))
         self.screen.blit(self.map_img, self.camera.apply_rect(self.map_rect))

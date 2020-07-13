@@ -126,8 +126,7 @@ class Platform(pg.sprite.Sprite):
         self.y = y
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
-    def load_imgs(self):
-        
+
 
 class SpriteSheet:
     """ Class to load and parse a spritesheet

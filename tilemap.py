@@ -59,7 +59,7 @@ class TiledMap:
         #                 surface.blit(img_bitmap, (objects.x, objects.y))
 
     def make_map(self):
-        temp_surface = pg.Surface((self.width, self.height))
+        temp_surface = pg.Surface((self.width, self.height), pg.SRCALPHA)
         self.render(temp_surface)
         return temp_surface
 
