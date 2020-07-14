@@ -35,12 +35,14 @@ class Game:
         # start a new game
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
+        # region (txt map loading)
         # for row, tiles in enumerate(self.map.data):
         #     for col, tile in enumerate(tiles):
         #         if tile == "1":
         #             Platform(self, col, row)
         #         if tile == "p":
         #             self.player = Player(self, col, row)
+        # endregion
         for tile_object in self.map.tmxdata.objects:
             if tile_object.name == "Player":
                 self.player = Player(self, tile_object.x, tile_object.y)
