@@ -120,6 +120,7 @@ class Game:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
             # Blit FPS for debugging purposes only. Remove in future release
             self.screen.blit(self.fps, (50, 50))
+            sprite.show_vectors()
         # *after* drawing everything, flip the display
         pg.display.flip()
 

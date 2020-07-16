@@ -113,6 +113,12 @@ class Player(pg.sprite.Sprite):
             self.rect.bottom = HEIGHT
             self.pos.y = self.rect.y
 
+    def show_vectors(self):
+        scale = 25
+        pg.draw.line(
+            self.game.screen, GREEN, self.pos, (self.pos + self.vel * scale), 5
+        )
+
 
 class Platform(pg.sprite.Sprite):
     def __init__(self, game, x, y):
